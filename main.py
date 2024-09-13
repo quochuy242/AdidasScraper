@@ -1,12 +1,13 @@
 import asyncio
 import json
+import os
 from typing import List
 
 import httpx
 from rich import print
 
-from scrape import URL, fetch_product_details, fetch_product_urls
 from product import Product
+from scrape import URL, fetch_product_details, fetch_product_urls
 
 
 def save_to_json(products: List[Product], filename: str) -> None:
@@ -31,6 +32,7 @@ async def main() -> None:
             print(f"Loading successful {len(products)} products")
 
             # Save all product to json file
+            os.makedirs("./json", exist_ok=True)
             save_to_json(products, f"./json/shoes_{gender.split('/')[-1]}.json")
 
 

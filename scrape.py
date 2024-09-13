@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 import httpx
 from rich import print
 from selectolax.parser import HTMLParser
+
 from product import Product
 
 # Base url, add number of page to get the url of each page
