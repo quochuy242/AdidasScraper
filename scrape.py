@@ -1,8 +1,6 @@
-import csv
 import json
 import os
-import time
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Tuple
 from urllib.parse import urljoin
 
 from curl_cffi import requests

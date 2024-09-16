@@ -1,6 +1,8 @@
 import argparse
 from typing import Dict
 
+from tqdm import trange
+
 import scrape
 
 
@@ -77,7 +79,7 @@ def main() -> None:
         else count_item
     )
 
-    for ith in range(0, num_item, scrape_size):
+    for ith in trange(0, num_item, scrape_size, desc="Number of Items"):
         ith_json_data: Dict = scrape.get_json(
             api=scrape.get_api(country=country, start_num=ith, search_item=search)
         )
