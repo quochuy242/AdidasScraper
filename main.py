@@ -1,40 +1,89 @@
-import asyncio
-import json
-import os
-from typing import List
+import argparse
+from typing import Dict
 
-import httpx
-from rich import print
-
-from product import Product
-from scrape import URL, fetch_product_details, fetch_product_urls
+import scrape
 
 
-def save_to_json(products: List[Product], filename: str) -> None:
-    """
-    Save the list of products to a json file
-    """
-    with open(filename, "w") as f:
-        json.dump([product.to_dict() for product in products], f, indent=4)
+def check_number_item(num_item: int, total_item: int) -> int:
+    return total_item if num_item > total_item else num_item
 
 
-async def main() -> None:
-    async with httpx.AsyncClient() as client:
-        for gender in ["/en/men-shoes", "/en/woman-shoes"]:
-            gender_url: str = URL + gender
-            print(f"Scraping {gender_url}")
+def main() -> None:
+    parser = argparse.ArgumentParser(description="The main file of repo")
+    parser.add_argument(
+        "--country", type=str, default="en", help="The alpha-2 code of the country"
+    )
+    parser.add_argument(
+        "-t", "--total-item", type=bool, required=True, help="Scraping all found items"
+    )
+    parser.add_argument(
+        "-n",
+        "--num-item",
+        type=int,
+        help="The number of items wanting to scrape",
+        default=1000,
+    )
+    parser.add_argument(
+        "-s",
+        "--search",
+        type=str,
+        default="shoes",
+        help="used to find products on the Adidas homepage ",
+    )
+    parser.add_argument(
+        "-d",
+        "--detail",
+        type=bool,
+        default=False,
+        help="The bool type, used to get the detail of the items",
+    )
+    parser.add_argument(
+        "-i",
+        "--info-api",
+        type=bool,
+        default=False,
+        help="Get the information of the json api",
+    )
+    parser.add_argument(
+        "-c",
+        "--csv",
+        type=str,
+        default="./output/adidas.csv",
+        help="CSV output directory ",
+    )
+    args = parser.parse_args()
 
-            product_urls: List[str] = await fetch_product_urls(client, gender_url)
-            print("Example 5 first product: ", product_urls[:5])
-            print(f"Number of products: {len(product_urls)}")
+    country = args.country
+    total_item = args.total_item
+    num_item = args.num_item
+    search = args.search
+    detail = args.detail
+    info_api = args.info_api
+    csv_path = args.csv
 
-            products: List[Product] = await fetch_product_details(client, product_urls)
-            print(f"Loading successful {len(products)} products")
+    json_data: Dict = scrape.get_json(
+        api=scrape.get_api(country=country, start_num=0, search_item=search)
+    )
 
-            # Save all product to json file
-            os.makedirs("./json", exist_ok=True)
-            save_to_json(products, f"./json/shoes_{gender.split('/')[-1]}.json")
+    scrape_size = int(json_data["raw"]["itemList"]["viewSize"])
+
+    if info_api:
+        scrape.get_info(text=json_data)
+
+    count_item: int = scrape.get_total_item(text=json_data)
+    num_item = (
+        check_number_item(num_item=num_item, total_item=count_item)
+        if not total_item
+        else count_item
+    )
+
+    for ith in range(0, num_item, scrape_size):
+        ith_json_data: Dict = scrape.get_json(
+            api=scrape.get_api(country=country, start_num=ith, search_item=search)
+        )
+        items = scrape.get_items(text=ith_json_data, detail=detail)
+        scrape.save_to_csv(items=items, file_name=csv_path)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
