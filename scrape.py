@@ -1,10 +1,9 @@
 import json
 import os
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, List
 from urllib.parse import urljoin
 
 from curl_cffi import requests
-from pydantic_csv import BasemodelCSVWriter
 from rich import print
 
 from item import Item
