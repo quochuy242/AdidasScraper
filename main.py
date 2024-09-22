@@ -54,7 +54,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    country = args.country
+    language = args.language
     total_item = args.total_item
     num_item = args.num_item
     search = args.search
@@ -62,7 +62,7 @@ def main() -> None:
     csv_path = args.csv
 
     json_data: Dict = scrape.get_json(
-        api=scrape.get_api(country=country, start_num=0, search_item=search)
+        api=scrape.get_api(language=language, start_num=0, search_item=search)
     )
 
     scrape_size = int(json_data["raw"]["itemList"]["viewSize"])
@@ -80,7 +80,7 @@ def main() -> None:
     items = []
     for ith in trange(0, num_item, scrape_size, desc="Number of Items"):
         ith_json_data: Dict = scrape.get_json(
-            api=scrape.get_api(country=country, start_num=ith, search_item=search)
+            api=scrape.get_api(language=language, start_num=ith, search_item=search)
         )
         items.extend(scrape.get_items(text=ith_json_data))
 

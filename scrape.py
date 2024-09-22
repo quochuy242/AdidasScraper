@@ -20,8 +20,10 @@ def get_json(api: str) -> Dict:
         raise e
 
 
-def get_api(country: str = "en", start_num: int = 0, search_item: str = "shoes") -> str:
-    return f"https://www.adidas.com.vn/api/plp/content-engine?sitePath={country}&query={search_item}&start={start_num}"
+def get_api(
+    language: str = "en", start_num: int = 0, search_item: str = "shoes"
+) -> str:
+    return f"https://www.adidas.com.vn/api/plp/content-engine?sitePath={language}&query={search_item}&start={start_num}"
 
 
 def get_total_item(text: Dict) -> int:
