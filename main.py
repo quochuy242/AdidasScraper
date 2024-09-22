@@ -15,7 +15,11 @@ def check_number_item(num_item: int, total_item: int) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser(description="The main file of repo")
     parser.add_argument(
-        "--country", type=str, default="en", help="The alpha-2 code of the country"
+        "-l",
+        "--language",
+        type=str,
+        default="en",
+        help="The language of the data you want to scrape",
     )
     parser.add_argument(
         "-t", "--total-item", type=bool, required=True, help="Scraping all found items"

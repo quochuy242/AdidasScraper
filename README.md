@@ -21,7 +21,7 @@ pip3 install -r requirements.txt
 
 Command-line Arguments
 
-- `--country` (str): The alpha-2 code of the country. Defaults to "en".
+- `-l, --language` (str): The language of the data you want to scrap. Defaults to "en".
 - `-t, --total-item` (bool): Whether to scrape all found items. This is required.
 - `-n, --num-item` (int): The number of items you want to scrape. Defaults to 1000.
 - `-s, --search` (str): The search term used to find products on the Adidas homepage. Defaults to "shoes".
