@@ -32,21 +32,25 @@ Command-line Arguments
 Example Commands
 
 1. Scrape all available items with the default search term ("shoes") and save to the default CSV location:
+
    ```bash
    python scraper.py --total-item True
    ```
 
 2. Scrape 500 items from the U.S. Adidas website, looking for "jackets", and save the data to a specific CSV file:
+
    ```bash
    python scraper.py --country "us" --num-item 500 --search "jackets" --csv "./output/jackets.csv"
    ```
 
 3. Scrape all shoes with detailed information:
+
    ```bash
    python scraper.py --total-item True --detail True
    ```
 
 4. Get information about the API without scraping:
+
    ```bash
    python scraper.py --info-api True
    ```
@@ -54,6 +58,7 @@ Example Commands
 ## Output
 
 The CSV file contains the following fields:
+
 - Product Name
 - Price
 - Product ID
