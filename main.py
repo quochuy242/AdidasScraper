@@ -4,6 +4,8 @@ from typing import Dict
 from tqdm import trange
 
 import scrape
+import clean
+import polars as pl
 
 
 def check_number_item(num_item: int, total_item: int) -> int:
@@ -33,13 +35,6 @@ def main() -> None:
         help="used to find products on the Adidas homepage ",
     )
     parser.add_argument(
-        "-d",
-        "--detail",
-        type=bool,
-        default=False,
-        help="The bool type, used to get the detail of the items",
-    )
-    parser.add_argument(
         "-i",
         "--info-api",
         type=bool,
@@ -59,7 +54,6 @@ def main() -> None:
     total_item = args.total_item
     num_item = args.num_item
     search = args.search
-    detail = args.detail
     info_api = args.info_api
     csv_path = args.csv
 
@@ -79,12 +73,17 @@ def main() -> None:
         else count_item
     )
 
+    items = []
     for ith in trange(0, num_item, scrape_size, desc="Number of Items"):
         ith_json_data: Dict = scrape.get_json(
             api=scrape.get_api(country=country, start_num=ith, search_item=search)
         )
-        items = scrape.get_items(text=ith_json_data, detail=detail)
-        scrape.save_to_csv(items=items, file_name=csv_path)
+        items.extend(scrape.get_items(text=ith_json_data))
+
+    # Cleaning data
+    df = pl.DataFrame(data=[item.dict() for item in items])
+    df = clean.extract_gender(df=df)
+    scrape.save_to_csv(items=df, file_name=csv_path)
 
 
 if __name__ == "__main__":
